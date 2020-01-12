@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
+from datetime import datetime
 time=''#we can add ?date=week,?date=month,?date=week3month etc to select the timeframe we want to choose
 baseurl='https://www.dotabuff.com/items' #this is the basic url it retrieves the item data of the current month
 page=requests.get(url,headers={'user-agent':'item-scraper v0.1'})#we request the contents of the page
@@ -21,4 +22,6 @@ items=list(tbody.children)
 for i in range(len(items)):
     list_item=list(items[i].children)
     df=df.append(pd.Series([list_item[1].get_text(),list_item[2].get_text(),list_item[3].get_text(),list_item[4].get_text()],index=df.columns),ignore_index=True)
-df.to_csv("dota2_items.csv",sep=';')#saved to csv
+df['date']=datetime.today().strftime('%Y-%m-%d')
+csv_name='item_data_'+str(datetime.today().strftime('%Y-%m-%d'))+'.csv'
+df.to_csv(csv_name,sep=';')
